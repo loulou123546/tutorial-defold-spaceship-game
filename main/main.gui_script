@@ -1,0 +1,23 @@
+function init(self)
+	self.score = 0
+	self.score_node = gui.get_node("score")
+	self.dash_reload_mode = gui.get_node("dash_reload")
+end
+
+local function scale_down(self, node)
+	local s = 1.0
+	gui.animate(node, gui.PROP_SCALE, vmath.vector4(s, s, s, 0), gui.EASING_OUT, 0.05)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("add_score") then
+		local s = 1.2
+		self.score = self.score + message.amount
+		gui.set_text(self.score_node, tostring(self.score))
+		gui.animate(self.score_node, gui.PROP_SCALE, vmath.vector4(s, s, s, 0), gui.EASING_OUT, 0.1, 0.0, scale_down)
+	end
+	if message_id == hash("use_dash") then
+		gui.set_scale(self.dash_reload_mode, vmath.vector4(0.0, 0.3, 1.0, 0))
+		gui.animate(self.dash_reload_mode, gui.PROP_SCALE, vmath.vector4(2.5, 0.3, 1.0, 0), gui.EASING_LINEAR, message.duration, 0.0)
+	end
+end
